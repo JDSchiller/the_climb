@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-cream text-midnight antialiased; }
+
+.eyebrow { @apply text-[11px] font-bold tracking-[0.22em] uppercase text-golddk; }
+.card { @apply bg-white rounded-xl border border-midnight/10 p-4; }
+.btn { @apply inline-flex items-center justify-center rounded-lg bg-midnight text-cream text-sm font-semibold px-4 py-2 hover:bg-midnight/90 disabled:opacity-50; }
+.btn-gold { @apply inline-flex items-center justify-center rounded-lg bg-gold text-midnight text-sm font-semibold px-4 py-2 hover:bg-gold/90 disabled:opacity-50; }
+.btn-ghost { @apply inline-flex items-center justify-center rounded-lg border border-midnight/20 text-midnight text-sm font-semibold px-4 py-2 hover:bg-midnight/5; }
+.input { @apply w-full rounded-lg border border-midnight/20 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold; }
+.label { @apply block text-xs font-semibold text-slate2 mb-1; }
+.pill { @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold; }
