@@ -27,26 +27,23 @@ jobs:
           cache: npm
           cache-dependency-path: the-climb/package-lock.json
       - name: Install dependencies
+        working-directory: ./the-climb
         run: npm ci
-        working-directory: ./the-climb
       - name: Build with Next.js
-        run: npx next build
         working-directory: ./the-climb
+        run: npx next build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./the-climb/out
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
