@@ -29,7 +29,7 @@ export default async function AthleteHome() {
     <div className="min-h-screen">
       <AppHeader
         title={athlete.name.split(" ")[0]}
-        subtitle={mem ? `${mem.team} \u00b7 ${mem.level} \u00b7 ${mem.season_label}` : undefined}
+        subtitle={mem ? `${mem.team} · ${mem.level} · ${mem.season_label}` : undefined}
         right={<LogoutButton />}
       />
       <main className="max-w-3xl mx-auto px-4 pb-16">
@@ -38,7 +38,7 @@ export default async function AthleteHome() {
             <div className="eyebrow mb-1">Next up</div>
             <div className="text-lg font-bold">{next.title}</div>
             <div className="text-sm text-slate2">
-              {fmtDate(next.date)} \u00b7 {fmtTime(next.start_time)}{next.location ? ` \u00b7 ${next.location}` : ""}
+              {fmtDate(next.date)} · {fmtTime(next.start_time)}{next.location ? ` · ${next.location}` : ""}
             </div>
           </div>
         )}
@@ -80,7 +80,7 @@ export default async function AthleteHome() {
               {clips.map((c) => (
                 <figure key={c.id}>
                   <video controls preload="metadata" playsInline className="w-full rounded-lg bg-midnight" src={`/api/media/${c.id}`} />
-                  <figcaption className="text-xs text-slate2 mt-1">{c.title}{c.season_label ? ` \u00b7 ${c.season_label}` : ""}</figcaption>
+                  <figcaption className="text-xs text-slate2 mt-1">{c.title}{c.season_label ? ` · ${c.season_label}` : ""}</figcaption>
                 </figure>
               ))}
             </div>
@@ -117,13 +117,13 @@ export default async function AthleteHome() {
               <div className="flex items-baseline justify-between">
                 <div>
                   <div className="text-2xl font-bold">{fmtAmount(ledger.balance, ledger.ledger.unit_label, ledger.ledger.unit_type)}</div>
-                  <div className="text-xs text-slate2">Balance \u00b7 {fmtAmount(ledger.withheld, ledger.ledger.unit_label, ledger.ledger.unit_type)} held to savings</div>
+                  <div className="text-xs text-slate2">Balance · {fmtAmount(ledger.withheld, ledger.ledger.unit_label, ledger.ledger.unit_type)} held to savings</div>
                 </div>
               </div>
               <div className="mt-3 space-y-1">
                 {ledger.entries.slice(0, 5).map((en) => (
                   <div key={en.id} className="flex justify-between text-sm">
-                    <span className="text-slate2 truncate pr-3">{fmtDate(en.entry_date)} \u00b7 {en.description}</span>
+                    <span className="text-slate2 truncate pr-3">{fmtDate(en.entry_date)} · {en.description}</span>
                     <span className={`font-semibold ${en.amount < 0 ? "text-red-700" : ""}`}>
                       {en.amount < 0 ? "\u2212" : "+"}{fmtAmount(Math.abs(en.amount), ledger.ledger.unit_label, ledger.ledger.unit_type)}
                     </span>

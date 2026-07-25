@@ -35,8 +35,8 @@ export default async function EvaluatorsPage({ params }: { params: Promise<{ ath
           return (
             <div key={l.id} className="flex items-center gap-2 py-1.5 border-b border-midnight/5 last:border-0">
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold truncate">{l.evaluator_name} \u00b7 {l.rubric_name}</div>
-                <div className="text-xs text-slate2 truncate">{l.note ?? "\u2014"} \u00b7 expires {fmtDate(l.expires_at.slice(0, 10))}</div>
+                <div className="text-sm font-semibold truncate">{l.evaluator_name} · {l.rubric_name}</div>
+                <div className="text-xs text-slate2 truncate">{l.note ?? "no note"} · expires {fmtDate(l.expires_at.slice(0, 10))}</div>
               </div>
               <span className={`pill ${style}`}>{label}</span>
               {!l.used_at && <CopyButton text={`/e/${l.token}`} />}

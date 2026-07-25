@@ -14,7 +14,7 @@ export default async function SkillsPage({ params }: { params: Promise<{ athlete
 
   return (
     <div>
-      <SectionTitle>Skill progress \u00b7 stages, not scores</SectionTitle>
+      <SectionTitle>Skill progress · stages, not scores</SectionTitle>
       <div className="card overflow-x-auto">
         {grid && grid.evals.length ? (
           <table className="w-full text-sm">
@@ -41,7 +41,7 @@ export default async function SkillsPage({ params }: { params: Promise<{ athlete
                           <span className={`pill ${v >= 3 ? "bg-gold/25 text-golddk" : v === 1 ? "bg-red-100 text-red-800" : "bg-midnight/10 text-slate2"}`}>
                             {v}
                           </span>
-                        ) : <span className="text-slate2">\u2014</span>}
+                        ) : <span className="text-slate2"></span>}
                       </td>
                     );
                   })}

@@ -29,7 +29,7 @@ export default async function AthleteLayout({
     <div className="min-h-screen">
       <AppHeader
         title={athlete.name}
-        subtitle={mem ? `${mem.team} \u00b7 ${mem.level} \u00b7 Coach ${mem.coach ?? "TBD"}` : undefined}
+        subtitle={mem ? `${mem.team} · ${mem.level} · Coach ${mem.coach ?? "TBD"}` : undefined}
         right={
           <div className="flex flex-col items-end gap-1">
             <Link href="/manage" className="text-cream/60 text-xs hover:text-cream underline">All athletes</Link>

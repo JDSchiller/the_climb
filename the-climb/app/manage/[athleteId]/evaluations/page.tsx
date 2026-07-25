@@ -8,7 +8,7 @@ export default async function EvaluationsPage({ params }: { params: Promise<{ at
   const { athleteId } = await params;
   const rubric = await activeRubric("post_game");
   const mem = await currentMembership(athleteId);
-  const games = (await recentGames(athleteId, 15)).map((g) => ({ id: g.id, label: `${g.date} \u00b7 ${g.title}` }));
+  const games = (await recentGames(athleteId, 15)).map((g) => ({ id: g.id, label: `${g.date} · ${g.title}` }));
   const evals = await evaluationsFor(athleteId, "post_game");
 
   return (
@@ -29,10 +29,10 @@ export default async function EvaluationsPage({ params }: { params: Promise<{ at
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-sm font-bold">{fmtDate(ev.eval_date)}</span>
-                  <span className="text-xs text-slate2 ml-2">{ev.level_context} \u00b7 {ev.evaluator_name ?? "Family"}</span>
+                  <span className="text-xs text-slate2 ml-2">{ev.level_context} · {ev.evaluator_name ?? "Family"}</span>
                 </div>
                 <span className={`pill ${(ev.total ?? 0) >= 38 ? "bg-gold/25 text-golddk" : "bg-midnight/10 text-slate2"}`}>
-                  {ev.total} / 50{(ev.total ?? 0) >= 38 ? " \u00b7 bonus" : ""}
+                  {ev.total} / 50{(ev.total ?? 0) >= 38 ? " · bonus" : ""}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-2">

@@ -12,8 +12,8 @@ export default async function EvaluatorLinkPage({ params }: { params: Promise<{ 
     <div className="min-h-screen">
       <header className="bg-midnight text-cream">
         <div className="max-w-2xl mx-auto px-4 py-5">
-          <div className="text-[10px] font-bold tracking-[0.28em] text-gold uppercase mb-0.5">The Climb \u00b7 Evaluation</div>
-          {link && <h1 className="text-xl font-bold">{link.athlete_name.split(" ")[0]} \u00b7 {link.rubric_name}</h1>}
+          <div className="text-[10px] font-bold tracking-[0.28em] text-gold uppercase mb-0.5">The Climb · Evaluation</div>
+          {link && <h1 className="text-xl font-bold">{link.athlete_name.split(" ")[0]} · {link.rubric_name}</h1>}
         </div>
         <div className="h-1 bg-gold" />
       </header>

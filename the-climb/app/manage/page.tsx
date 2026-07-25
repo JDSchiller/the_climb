@@ -32,14 +32,14 @@ export default async function ManageHome() {
                 <div>
                   <div className="text-lg font-bold">{a.name}</div>
                   <div className="text-xs text-slate2">
-                    {mem ? `${mem.team} \u00b7 ${mem.level} \u00b7 ${mem.season_label}` : a.sport}
+                    {mem ? `${mem.team} · ${mem.level} · ${mem.season_label}` : a.sport}
                   </div>
                 </div>
                 <div className="text-right text-xs text-slate2">
                   {next ? (
                     <>
                       <div className="font-semibold text-midnight">{next.title}</div>
-                      <div>{fmtDate(next.date)} \u00b7 {fmtTime(next.start_time)}</div>
+                      <div>{fmtDate(next.date)} · {fmtTime(next.start_time)}</div>
                     </>
                   ) : (
                     "No upcoming events"

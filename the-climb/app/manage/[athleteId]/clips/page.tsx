@@ -19,7 +19,7 @@ export default async function ClipsPage({ params }: { params: Promise<{ athleteI
             <figure key={c.id} className="card !p-2">
               <video controls preload="metadata" playsInline className="w-full rounded-lg bg-midnight" src={`/api/media/${c.id}`} />
               <figcaption className="text-xs text-slate2 mt-1 px-1">
-                {c.title}{c.season_label ? ` \u00b7 ${c.season_label}` : ""} \u00b7 {(c.size_bytes / 1024 / 1024).toFixed(1)} MB
+                {c.title}{c.season_label ? ` · ${c.season_label}` : ""} · {(c.size_bytes / 1024 / 1024).toFixed(1)} MB
               </figcaption>
             </figure>
           ))}

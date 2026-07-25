@@ -20,7 +20,7 @@ export default async function DocumentsPage({ params }: { params: Promise<{ athl
         {docs.map((d) => (
           <a key={d.id} href={`/api/documents/${d.id}`} className="flex items-center justify-between py-2 border-b border-midnight/5 last:border-0 hover:underline">
             <span className="text-sm font-semibold">{d.title}</span>
-            <span className="text-xs text-slate2">{d.category} \u00b7 {fmtDate(d.created_at.slice(0, 10))}</span>
+            <span className="text-xs text-slate2">{d.category} · {fmtDate(d.created_at.slice(0, 10))}</span>
           </a>
         ))}
         {!docs.length && <p className="text-sm text-slate2">Nothing here yet. The contract and this season&rsquo;s schedule are good first uploads.</p>}

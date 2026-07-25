@@ -98,7 +98,7 @@ export function EvalForm({
 
       <div className="rounded-lg bg-paper px-3 py-2 text-xs text-slate2">
         <span className="font-semibold text-midnight">Scale:</span>{" "}
-        {scaleLabels.map((l, i) => `${scaleMin + i} ${l}`).join("  \u00b7  ")}
+        {scaleLabels.map((l, i) => `${scaleMin + i} ${l}`).join("  ·  ")}
         {!isPostGame && <span className="block mt-1 italic">Always compared to the level being played, never to last year&rsquo;s version of the player.</span>}
       </div>
 
@@ -129,8 +129,8 @@ export function EvalForm({
       {isPostGame && (
         <div className={`rounded-lg px-3 py-2 text-sm font-semibold ${complete && total >= 38 ? "bg-gold/20 text-golddk" : "bg-paper text-slate2"}`}>
           Total: {total} / {items.length * scaleMax}
-          {complete && total >= 38 && " \u2014 hustle bonus earned"}
-          {complete && total < 30 && " \u2014 under 30: a conversation, not a fine"}
+          {complete && total >= 38 && "  hustle bonus earned"}
+          {complete && total < 30 && "  under 30: a conversation, not a fine"}
         </div>
       )}
       {isPostGame && complete && total >= 38 && mode === "guardian" && (
