@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SchedulePage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const events = upcomingEvents(athleteId, 60);
+  const events = await upcomingEvents(athleteId, 60);
 
   return (
     <div>

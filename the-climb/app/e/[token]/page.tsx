@@ -1,12 +1,12 @@
 import { evalLinkByToken, rubricById, currentMembership } from "@/lib/services";
-import { db, audit } from "@/lib/db";
+import { run, audit } from "@/lib/db";
 import { EvalForm } from "@/components/eval-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function EvaluatorLinkPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const link = evalLinkByToken(token);
+  const link = await evalLinkByToken(token);
 
   const Shell = ({ children }: { children: React.ReactNode }) => (
     <div className="min-h-screen">
@@ -26,12 +26,12 @@ export default async function EvaluatorLinkPage({ params }: { params: Promise<{ 
   if (new Date(link.expires_at) < new Date()) return <Shell><div className="card"><p className="text-sm">This link has expired. Ask the family to send a fresh one.</p></div></Shell>;
 
   if (!link.opened_at) {
-    db().prepare("UPDATE eval_links SET opened_at = datetime('now') WHERE id = ?").run(link.id);
-    audit("eval_link.open", link.id, null, token);
+    await run("UPDATE eval_links SET opened_at = datetime('now') WHERE id = ?", [link.id]);
+    await audit("eval_link.open", link.id, null, token);
   }
 
-  const rubric = rubricById(link.rubric_id)!;
-  const mem = currentMembership(link.athlete_id);
+  const rubric = (await rubricById(link.rubric_id))!;
+  const mem = await currentMembership(link.athlete_id);
 
   return (
     <Shell>

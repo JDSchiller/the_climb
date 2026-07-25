@@ -20,10 +20,10 @@ export default async function AthleteLayout({
   const { athleteId } = await params;
   const user = await currentUser();
   if (!user) redirect("/login");
-  if (!isGuardianOrManager(user.id, athleteId)) redirect("/manage");
-  const athlete = getAthlete(athleteId);
+  if (!(await isGuardianOrManager(user.id, athleteId))) redirect("/manage");
+  const athlete = await getAthlete(athleteId);
   if (!athlete) notFound();
-  const mem = currentMembership(athleteId);
+  const mem = await currentMembership(athleteId);
 
   return (
     <div className="min-h-screen">

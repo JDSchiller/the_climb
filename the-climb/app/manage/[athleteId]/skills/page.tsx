@@ -7,9 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function SkillsPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const grid = skillGrid(athleteId);
-  const mem = currentMembership(athleteId);
-  const rubric = activeRubric("skill_progress");
+  const grid = await skillGrid(athleteId);
+  const mem = await currentMembership(athleteId);
+  const rubric = await activeRubric("skill_progress");
   const labels: string[] = rubric ? JSON.parse(rubric.scale_labels) : [];
 
   return (

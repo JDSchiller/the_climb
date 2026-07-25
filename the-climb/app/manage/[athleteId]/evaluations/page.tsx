@@ -6,10 +6,10 @@ export const dynamic = "force-dynamic";
 
 export default async function EvaluationsPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const rubric = activeRubric("post_game");
-  const mem = currentMembership(athleteId);
-  const games = recentGames(athleteId, 15).map((g) => ({ id: g.id, label: `${g.date} \u00b7 ${g.title}` }));
-  const evals = evaluationsFor(athleteId, "post_game");
+  const rubric = await activeRubric("post_game");
+  const mem = await currentMembership(athleteId);
+  const games = (await recentGames(athleteId, 15)).map((g) => ({ id: g.id, label: `${g.date} \u00b7 ${g.title}` }));
+  const evals = await evaluationsFor(athleteId, "post_game");
 
   return (
     <div>
@@ -22,9 +22,8 @@ export default async function EvaluationsPage({ params }: { params: Promise<{ at
 
       <SectionTitle>History ({evals.length})</SectionTitle>
       <div className="space-y-3">
-        {evals.map((ev) => {
+        {(await Promise.all(evals.map(async (ev) => ({ ev, scores: await evaluationScores(ev.id) })))).map(({ ev, scores }) => {
           const notes = ev.notes ? (JSON.parse(ev.notes) as Record<string, string>) : {};
-          const scores = evaluationScores(ev.id);
           return (
             <div key={ev.id} className="card">
               <div className="flex items-center justify-between">

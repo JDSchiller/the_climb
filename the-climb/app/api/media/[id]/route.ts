@@ -1,7 +1,7 @@
 import { createReadStream, statSync, existsSync } from "fs";
 import { join } from "path";
 import { currentUser, canAccess } from "@/lib/auth";
-import { db, audit } from "@/lib/db";
+import { q1, audit } from "@/lib/db";
 import { Readable } from "stream";
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || join(process.cwd(), "data", "uploads");
@@ -10,17 +10,21 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const user = await currentUser();
   if (!user) return new Response("Not signed in", { status: 401 });
-  const m = db().prepare("SELECT * FROM media WHERE id = ?").get(id) as
-    | { id: string; athlete_id: string; file_path: string; mime: string; size_bytes: number }
-    | undefined;
+  const m = await q1<{ id: string; athlete_id: string; file_path: string; mime: string; size_bytes: number }>(
+    "SELECT * FROM media WHERE id = ?", [id]
+  );
   if (!m) return new Response("Not found", { status: 404 });
-  if (!canAccess(user.id, m.athlete_id)) return new Response("Forbidden", { status: 403 });
+  if (!(await canAccess(user.id, m.athlete_id))) return new Response("Forbidden", { status: 403 });
+  await audit("media.view", m.id, user.id);
 
+  // Blob-backed: access-checked and audited here, then served by the Blob CDN
+  // (unguessable URL) which handles Range requests for video seeking.
+  if (m.file_path.startsWith("http")) return Response.redirect(m.file_path, 302);
+
+  // Disk-backed (local dev / disk hosts): stream with Range support.
   const path = join(UPLOAD_DIR, m.file_path);
   if (!existsSync(path)) return new Response("File missing", { status: 404 });
   const size = statSync(path).size;
-  audit("media.view", m.id, user.id);
-
   const range = req.headers.get("range");
   if (range) {
     const match = /bytes=(\d*)-(\d*)/.exec(range);

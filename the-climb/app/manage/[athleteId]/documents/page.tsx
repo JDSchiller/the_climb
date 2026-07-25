@@ -6,13 +6,13 @@ export const dynamic = "force-dynamic";
 
 export default async function DocumentsPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const docs = documentsFor(athleteId);
+  const docs = await documentsFor(athleteId);
 
   return (
     <div>
       <SectionTitle>Upload a document</SectionTitle>
       <div className="card">
-        <DocumentUploadForm athleteId={athleteId} />
+        <DocumentUploadForm athleteId={athleteId} blobMode={!!process.env.BLOB_READ_WRITE_TOKEN} />
         <p className="text-xs text-slate2 mt-2">Contracts, the season schedule PDF, the player profile, the roadmap. 25 MB max each.</p>
       </div>
       <SectionTitle>Documents ({docs.length})</SectionTitle>

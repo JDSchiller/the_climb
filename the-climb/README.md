@@ -1,75 +1,76 @@
 # The Climb
 
-The athlete-owned development record. The athlete is the root object; teams, coaches, and seasons attach to him and detach. The record carries from 12U to 18U and beyond.
+The summit is the dream. The climb is the plan.
 
-*The summit is the dream. The climb is the plan.*
+A family-owned athlete development tracker. The athlete is the root record; clubs, coaches and seasons attach to the athlete and expire. Built for Kohen's 2026-27 season with Central Florida Hockey Club.
 
-## Run it locally
+## What it does
+
+- Schedule: practices, skills, lessons, games, showcases, tournaments
+- Post-game evaluations on the 10-item SSMG rubric (1-5, hustle bonus at 38+)
+- Skill progress check-ins on the 10-skill rubric (stages 1-4, anchored to the level)
+- Coach check-ins via single-use expiring links. Coaches never get a login.
+- Clips (300 MB cap, clips only, never full games)
+- Ledger in the family's units (dollars for Kohen), with 10% withheld to savings
+- Documents (contract, eval sheets, schedules)
+- Full audit log. Every view and change is recorded.
+
+## Architecture
+
+Next.js 15 App Router. Database is SQLite-compatible via `@libsql/client`:
+a local file in development, [Turso](https://turso.tech) in production.
+Clips and documents go to local disk in development, Vercel Blob in production
+(browser uploads go straight to Blob storage, so big clips never touch a
+serverless function). Login is by emailed/texted code, invite-only; in
+`SANDBOX_MODE` the code is shown on screen.
+
+Repo layout: the app lives in `the-climb/`. On Vercel, set the project
+**Root Directory** to `the-climb`.
+
+## Deploy on Vercel
+
+1. Import this repo into Vercel. Set Root Directory to `the-climb`.
+2. **Storage → Create Database → Blob.** Connect it to the project. This adds
+   `BLOB_READ_WRITE_TOKEN` automatically.
+3. **Marketplace → Turso.** Create a free database and connect it. This adds
+   `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. (If your integration uses
+   different names, copy the values into those two names in Project Settings →
+   Environment Variables.)
+4. Add environment variable `SANDBOX_MODE=true`.
+5. Redeploy, then visit `/api/setup` once. It loads Kohen's season and returns
+   the sandbox logins plus Coach Bardaro's live check-in link. Visiting it again
+   changes nothing.
+6. Sign in at `/login`.
+
+Any disk-based host (Railway, Fly, a VPS) also works with zero configuration:
+without Turso/Blob variables the app falls back to a local SQLite file and disk
+uploads.
+
+## Local development
 
 ```bash
 npm install
-npm run seed     # creates data/app.db with Kohen's 2026-27 season + demo athletes
-npm run build
-npm start        # http://localhost:3000
+npm run seed     # loads Kohen's 2026-27 season into data/app.db
+npm run dev
 ```
 
-## Seeded logins
+Sandbox logins after seeding: `jordan@example.com` (guardian/manager),
+`kohen@example.com` (athlete), `demo@example.com` (scoping demo, sees only the
+demo athlete). Login codes print on screen and in the server log.
 
-Sandbox mode shows the 6-digit code on screen after you enter an email or phone. No email/SMS account needed yet.
+`FORCE_SEED=true npm run seed` wipes and reseeds. The seed refuses to touch a
+database that already has data otherwise.
 
-| Who | Login | Sees |
-|---|---|---|
-| Jordan (guardian + manager) | `jordan@example.com` or `+14075550100` | Kohen + Rex (demo athlete) |
-| Kohen (athlete) | `kohen@example.com` or `+14075550101` | His own dashboard |
-| Demo parent (scoping proof) | `demo@example.com` | Only Finn, never Kohen |
+## Replacing sandbox data with real accounts
 
-The seed also prints a live, single-use evaluation link for Coach Bardaro (a `/e/...` URL). That's the coach flow: no account, one athlete, one rubric, expires on its own.
+Edit `lib/seed.ts` (emails/phones), run a forced reseed, then set
+`SANDBOX_MODE=false` once an email/SMS sender is wired into `requestCode()`
+in `lib/auth.ts` (Resend for email, Twilio for SMS).
 
-**Before real use:** change the emails/phones in `scripts/seed.ts` to your real ones and run `npm run seed` again (wipes and rebuilds), or update the `users` table directly.
+## Design decisions worth keeping
 
-## Deploy (the live server Kohen's phone and the coach's computer share)
-
-Any Node host with a persistent disk works. Railway and Render are the easy paths:
-
-1. Push this folder to a GitHub repo.
-2. Create a new Railway/Render web service from the repo. Build: `npm install && npm run build`. Start: `npm start`.
-3. **Attach a persistent volume** mounted at `/data` (this is the one step you can't skip: SQLite and uploaded clips live on disk).
-4. Set environment variables:
-   - `DB_PATH=/data/app.db`
-   - `UPLOAD_DIR=/data/uploads`
-   - `SANDBOX_MODE=true` (leave on until email/SMS sending is configured)
-5. Run the seed once: `npm run seed` from the service shell (Railway: `railway run npm run seed`).
-6. Open the URL on Kohen's phone, Share > Add to Home Screen. It installs like an app.
-
-## Turning on real login codes
-
-`lib/auth.ts` > `requestCode()` currently returns the code to the screen in sandbox mode and logs it to the server console. When ready:
-
-- Email: sign up for Resend, send the code there instead.
-- SMS: Twilio, same spot.
-- Then set `SANDBOX_MODE=false`.
-
-## What's deliberately NOT in v1
-
-- **Coach accounts.** Coaches get categorized, expiring, single-use links. Less onboarding, less child-safety surface.
-- **Win streaks / team standings.** Cut on purpose; needs score data the feed doesn't have.
-- **Leaderboards.** Never. Architectural line, not a backlog item.
-- **Payments.** The ledger is a record, not a payment rail.
-- **Tryouts.** Different product, later.
-
-## Known gotchas
-
-- **iPhone video (HEVC):** iPhones record HEVC, which some desktop browsers won't play. If a clip plays on the phone but not the coach's computer, that's why. Fix later with server-side transcoding to H.264 (ffmpeg) or an upload service like Mux. The schema already stores mime type, so nothing breaks.
-- **Uploads on rink wifi:** the 300 MB clip cap helps, but uploads aren't resumable yet. If this bites, TUS or Uppy is the upgrade.
-- **Backups:** the whole record is `data/app.db` + `data/uploads/`. Snapshot the volume on a schedule (Railway/Render both offer this). The record outliving teams is the entire premise; losing it is the one unrecoverable failure.
-
-## Scaling notes (when it's more than Kohen)
-
-- SQLite → Postgres: the query layer is plain SQL in `lib/services.ts`; the schema is portable.
-- Local disk → S3/R2 for clips: swap the read/write in the two media routes.
-- Units: each family's ledger already carries `unit_type` (currency | points) and a label. The big-launch switch to points is a per-family setting, not a migration.
-- Rubrics, skills, stages, and levels are all rows, versioned. A new sport is data entry, not a fork. Old evaluations always render against the rubric version that scored them.
-
-## Architecture in one paragraph
-
-One `users` table; roles are rows in `grants` (guardian / manager / athlete / viewer), scoped to an athlete and a time window, so a 16-year-old becoming his own manager is a grant, not a rebuild. Evaluations stamp the level they were rated against (`level_context`) and reference a versioned rubric. Evaluators are a directory; access happens through tokenized `eval_links`. Media and documents are served only through access-checked routes, and views land in `audit_log`. All service logic lives in `lib/services.ts` behind `/api/*` routes, so the future iPhone app is a new client, not a rewrite.
+- Family owns the data. Coach access is tokenized, expiring, single-use.
+- Rubrics are versioned rows, not code. Old evaluations keep their meaning.
+- Every evaluation stamps the level it was made at. A 3 at 12U AA is not a 3 at 14U AAA.
+- Ledger units per family: dollars, points, whatever the house uses.
+- No leaderboards. Ever. The only comparison is Kohen vs. last month's Kohen.

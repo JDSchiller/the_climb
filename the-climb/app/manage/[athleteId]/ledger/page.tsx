@@ -16,7 +16,7 @@ const KIND_STYLE: Record<string, string> = {
 
 export default async function LedgerPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const l = ledgerFor(athleteId);
+  const l = await ledgerFor(athleteId);
   if (!l) return <p className="text-sm text-slate2 mt-6">No ledger set up for this athlete.</p>;
   const { ledger, entries, balance, withheld, available } = l;
   const fmt = (n: number) => fmtAmount(n, ledger.unit_label, ledger.unit_type);

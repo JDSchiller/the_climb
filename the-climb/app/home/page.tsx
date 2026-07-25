@@ -12,18 +12,18 @@ export const dynamic = "force-dynamic";
 export default async function AthleteHome() {
   const user = await currentUser();
   if (!user) redirect("/login");
-  const grant = grantsFor(user.id).find((g) => g.role === "athlete");
+  const grant = (await grantsFor(user.id)).find((g) => g.role === "athlete");
   if (!grant) redirect("/manage");
 
-  const athlete = getAthlete(grant.athlete_id)!;
-  const mem = currentMembership(athlete.id);
-  const events = upcomingEvents(athlete.id, 6);
+  const athlete = (await getAthlete(grant.athlete_id))!;
+  const mem = await currentMembership(athlete.id);
+  const events = await upcomingEvents(athlete.id, 6);
   const next = events[0];
-  const grid = skillGrid(athlete.id);
-  const clips = mediaFor(athlete.id);
-  const ledger = ledgerFor(athlete.id);
-  const docs = documentsFor(athlete.id);
-  const postGame = evaluationsFor(athlete.id, "post_game").slice(0, 3);
+  const grid = await skillGrid(athlete.id);
+  const clips = await mediaFor(athlete.id);
+  const ledger = await ledgerFor(athlete.id);
+  const docs = await documentsFor(athlete.id);
+  const postGame = (await evaluationsFor(athlete.id, "post_game")).slice(0, 3);
 
   return (
     <div className="min-h-screen">
@@ -74,7 +74,7 @@ export default async function AthleteHome() {
 
         <SectionTitle>My clips</SectionTitle>
         <div className="card">
-          <ClipUpload athleteId={athlete.id} />
+          <ClipUpload athleteId={athlete.id} blobMode={!!process.env.BLOB_READ_WRITE_TOKEN} />
           {clips.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               {clips.map((c) => (

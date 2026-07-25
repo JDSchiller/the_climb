@@ -1,5 +1,5 @@
 import { listEvaluators, linksFor } from "@/lib/services";
-import { db } from "@/lib/db";
+import { q } from "@/lib/db";
 import { SectionTitle, fmtDate } from "@/components/ui";
 import { NewEvaluatorForm, NewLinkForm, CopyButton } from "@/components/manage-forms";
 
@@ -7,9 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function EvaluatorsPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const evaluators = listEvaluators();
-  const rubrics = db().prepare("SELECT id, name, kind FROM rubrics WHERE active = 1 ORDER BY kind").all() as { id: string; name: string; kind: string }[];
-  const links = linksFor(athleteId);
+  const evaluators = await listEvaluators();
+  const rubrics = await q<{ id: string; name: string; kind: string }>("SELECT id, name, kind FROM rubrics WHERE active = 1 ORDER BY kind");
+  const links = await linksFor(athleteId);
 
   const status = (l: { used_at: string | null; opened_at: string | null; expires_at: string }) => {
     if (l.used_at) return ["submitted", "bg-gold/25 text-golddk"];

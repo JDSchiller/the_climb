@@ -6,12 +6,12 @@ export const dynamic = "force-dynamic";
 
 export default async function ClipsPage({ params }: { params: Promise<{ athleteId: string }> }) {
   const { athleteId } = await params;
-  const clips = mediaFor(athleteId);
+  const clips = await mediaFor(athleteId);
 
   return (
     <div>
       <SectionTitle>Upload a clip</SectionTitle>
-      <div className="card"><ClipUpload athleteId={athleteId} /></div>
+      <div className="card"><ClipUpload athleteId={athleteId} blobMode={!!process.env.BLOB_READ_WRITE_TOKEN} /></div>
       <SectionTitle>Clip bank ({clips.length})</SectionTitle>
       {clips.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -161,7 +161,7 @@ export function CopyButton({ text }: { text: string }) {
   );
 }
 
-export function DocumentUploadForm({ athleteId }: { athleteId: string }) {
+export function DocumentUploadForm({ athleteId, blobMode }: { athleteId: string; blobMode: boolean }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("contract");
@@ -173,13 +173,34 @@ export function DocumentUploadForm({ athleteId }: { athleteId: string }) {
     e.preventDefault();
     const file = fileRef.current?.files?.[0];
     if (!file) return setError("Pick a file.");
+    if (file.size > 25 * 1024 * 1024) return setError("25 MB max for documents.");
     setBusy(true); setError(null);
-    const fd = new FormData();
-    fd.append("file", file); fd.append("athlete_id", athleteId); fd.append("title", title || file.name); fd.append("category", category);
-    const res = await fetch("/api/documents/upload", { method: "POST", body: fd });
-    setBusy(false);
-    if (res.ok) { setTitle(""); if (fileRef.current) fileRef.current.value = ""; router.refresh(); }
-    else setError((await res.json()).error ?? "Upload failed.");
+    const docTitle = title || file.name;
+    try {
+      if (blobMode) {
+        const { upload } = await import("@vercel/blob/client");
+        const result = await upload(`docs/${athleteId}/${file.name}`, file, {
+          access: "public",
+          handleUploadUrl: "/api/documents/upload",
+          clientPayload: JSON.stringify({ athlete_id: athleteId }),
+        });
+        const reg = await fetch("/api/documents/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ athlete_id: athleteId, title: docTitle, category, url: result.url, pathname: result.pathname, size: file.size, mime: file.type || result.contentType }),
+        });
+        if (!reg.ok) throw new Error((await reg.json()).error ?? "Upload saved but could not be registered.");
+      } else {
+        const fd = new FormData();
+        fd.append("file", file); fd.append("athlete_id", athleteId); fd.append("title", docTitle); fd.append("category", category);
+        const res = await fetch("/api/documents/upload", { method: "POST", body: fd });
+        if (!res.ok) throw new Error((await res.json()).error ?? "Upload failed.");
+      }
+      setBusy(false); setTitle(""); if (fileRef.current) fileRef.current.value = ""; router.refresh();
+      return;
+    } catch (err) {
+      setBusy(false); setError((err as Error).message);
+    }
   }
 
   return (

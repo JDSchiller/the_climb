@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-cd /home/claude/climb
+cd /home/claude/repo/the-climb
 npx tsx scripts/seed.ts > seed_out.txt
 TOKEN=$(grep -o "/e/.*" seed_out.txt | sed 's|/e/||')
 nohup npx next start -p 3000 > server.log 2>&1 &
@@ -72,6 +72,12 @@ python3 -c "import sqlite3; [print(r[0], r[1]) for r in sqlite3.connect('data/ap
 
 echo "=== 12. Unauthenticated media fetch blocked (expect 401):"
 curl -s -o /dev/null -w "%{http_code}\n" localhost:3000/api/media/anything
+
+echo "=== 13. /api/setup on a seeded DB (expect seeded:false, nothing changed):"
+curl -s localhost:3000/api/setup | python3 -c "import sys,json; d=json.load(sys.stdin); print('seeded:', d['seeded'])"
+
+echo "=== 14. Unauthenticated media register blocked (expect 401):"
+curl -s -o /dev/null -w "%{http_code}\n" -X POST localhost:3000/api/media/register -H "Content-Type: application/json" -d '{}'
 
 kill $SERVER 2>/dev/null
 echo "=== DONE"

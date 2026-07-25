@@ -1,0 +1,9 @@
+   ▲ Next.js 15.5.21
+   - Local:        http://localhost:3000
+   - Network:      http://192.0.2.2:3000
+
+ ✓ Starting...
+ ✓ Ready in 392ms
+[auth] login code for jordan@example.com: 773510
+[auth] login code for demo@example.com: 687686
+[auth] login code for +1 (407) 555-0101: 891065
