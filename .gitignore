@@ -5,3 +5,6 @@ data/
 .env
 .env.local
 .DS_Store
+seed_out.txt
+server.log
+*.log

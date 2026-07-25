@@ -1,6 +1,0 @@
-Seeded.
-Logins (sandbox shows the code on screen):
-  Guardian/manager: jordan@example.com  (or +14075550100)
-  Athlete:          kohen@example.com   (or +14075550101)
-  Scoping test:     demo@example.com    (sees only Finn Osei)
-Coach Bardaro's live check-in link: /e/36YgeqNKS37g0dS_oPdwiMQZwhMjv9K2
