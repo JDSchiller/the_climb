@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  basePath: '/the_climb',
-  assetPrefix: '/the_climb',
-  images: {
-    unoptimized: true,
-  },
+  serverExternalPackages: ['better-sqlite3'],
 };
 
 export default nextConfig;
