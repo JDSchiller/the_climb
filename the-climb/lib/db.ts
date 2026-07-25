@@ -4,10 +4,23 @@ import { mkdirSync } from "fs";
 import { dirname, isAbsolute, join } from "path";
 import { SCHEMA } from "./schema";
 
-// Turso in production (TURSO_DATABASE_URL + TURSO_AUTH_TOKEN), a local file otherwise.
+// Turso in production, a local file otherwise.
+// Vercel's Turso integration lets you set a custom prefix, so the variable names
+// vary by install (TURSO_DATABASE_URL, DATABASE_TURSO_DATABASE_URL, ...). Rather than
+// pin one spelling, find the first env var whose name ends in the expected suffix.
+function findEnv(...suffixes: string[]): string | undefined {
+  for (const suffix of suffixes) {
+    const direct = process.env[suffix];
+    if (direct) return direct;
+    const key = Object.keys(process.env).find((k) => k.endsWith(suffix) && process.env[k]);
+    if (key) return process.env[key];
+  }
+  return undefined;
+}
+
 function resolveTarget(): { url: string; authToken?: string } {
-  const raw = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || "file:data/app.db";
-  const authToken = process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN || undefined;
+  const raw = findEnv("TURSO_DATABASE_URL", "DATABASE_URL") || "file:data/app.db";
+  const authToken = findEnv("TURSO_AUTH_TOKEN", "DATABASE_AUTH_TOKEN");
   if (raw.startsWith("file:")) {
     let p = raw.slice(5);
     if (!isAbsolute(p)) p = join(process.cwd(), p);
