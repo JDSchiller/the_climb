@@ -89,7 +89,7 @@ export function EvalForm({
           <div className="col-span-2">
             <label className="label">Game (optional)</label>
             <select className="input" value={eventId} onChange={(e) => setEventId(e.target.value)}>
-              <option value="">—</option>
+              <option value="">Choose one</option>
               {games.map((g) => <option key={g.id} value={g.id}>{g.label}</option>)}
             </select>
           </div>

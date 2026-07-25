@@ -24,7 +24,7 @@ export default async function EvaluatorsPage({ params }: { params: Promise<{ ath
       <div className="card">
         <NewLinkForm athleteId={athleteId} evaluators={evaluators} rubrics={rubrics} />
         <p className="text-xs text-slate2 mt-2">
-          Links are single-use and expire on their own. The evaluator sees one athlete, one rubric, and nothing else — no account, no login, no standing access.
+          Links are single-use and expire on their own. The evaluator sees one athlete, one rubric, and nothing else: no account, no login, no standing access.
         </p>
       </div>
 

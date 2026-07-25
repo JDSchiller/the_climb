@@ -22,7 +22,7 @@ export default async function EvaluatorLinkPage({ params }: { params: Promise<{ 
   );
 
   if (!link) return <Shell><div className="card"><p className="text-sm">This link is not valid. Ask the family to send a fresh one.</p></div></Shell>;
-  if (link.used_at) return <Shell><div className="card"><p className="text-sm">This evaluation was already submitted. Each link works once — ask the family for a new link for the next check-in.</p></div></Shell>;
+  if (link.used_at) return <Shell><div className="card"><p className="text-sm">This evaluation was already submitted. Each link works once. Ask the family for a new link for the next check-in.</p></div></Shell>;
   if (new Date(link.expires_at) < new Date()) return <Shell><div className="card"><p className="text-sm">This link has expired. Ask the family to send a fresh one.</p></div></Shell>;
 
   if (!link.opened_at) {
@@ -37,7 +37,7 @@ export default async function EvaluatorLinkPage({ params }: { params: Promise<{ 
     <Shell>
       <div className="card mb-4">
         <p className="text-sm">
-          <span className="font-bold">{link.evaluator_name}</span> — thanks for doing this.
+          <span className="font-bold">{link.evaluator_name}</span>, thanks for doing this.
           You&rsquo;re rating <span className="font-bold">{link.athlete_name}</span> against the level in front of you, not against his past self.
           {link.note && <span className="block mt-1 text-slate2 text-xs">Note from the family: {link.note}</span>}
         </p>

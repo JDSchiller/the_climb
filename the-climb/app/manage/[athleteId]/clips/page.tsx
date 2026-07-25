@@ -25,7 +25,7 @@ export default async function ClipsPage({ params }: { params: Promise<{ athleteI
           ))}
         </div>
       ) : (
-        <div className="card"><p className="text-sm text-slate2">No clips yet. Highlights only — this bank follows him from team to team, so it never gets deleted.</p></div>
+        <div className="card"><p className="text-sm text-slate2">No clips yet. Highlights only. This bank follows him from team to team, so it never gets deleted.</p></div>
       )}
       <p className="text-xs text-slate2 mt-3">
         Clips are private by default and served through an access-checked, logged endpoint. Every view is recorded.

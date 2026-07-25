@@ -85,7 +85,7 @@ export default async function AthleteHome() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate2 mt-2">No clips yet. Upload your first highlight — this bank follows you from team to team.</p>
+            <p className="text-sm text-slate2 mt-2">No clips yet. Upload your first highlight. This bank follows you from team to team.</p>
           )}
         </div>
 

@@ -54,7 +54,7 @@ export function ClipUpload({ athleteId, blobMode }: { athleteId: string; blobMod
     e.preventDefault();
     const file = fileRef.current?.files?.[0];
     if (!file) return setError("Pick a clip first.");
-    if (file.size > 300 * 1024 * 1024) return setError("Clips only — keep it under 300 MB. Full games belong somewhere cheaper.");
+    if (file.size > 300 * 1024 * 1024) return setError("Clips only. Keep it under 300 MB, full games belong somewhere cheaper.");
     if (!file.type.startsWith("video/")) return setError("Video files only.");
     setBusy(true); setError(null);
     const clipTitle = title || file.name.replace(/\.[^.]+$/, "");
